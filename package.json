@@ -1,0 +1,51 @@
+{
+  "name": "bluegate-session",
+  "version": "1.0.0",
+  "description": "Session support for BlueGate",
+  "main": "bluegate-session.js",
+  "scripts": {
+    "test": "mocha -b -t 5s test.js && eslint *.js",
+    "coverage": "mocha --require ./blanket.js -R html-cov test.js > coverage.html",
+    "rapidity": "mocha --require rapidity -R rapidity test.js > performance.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mauritsl/bluegate-session.git"
+  },
+  "engines": {
+    "node": ">= 0.12.0"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "bluegate-session.js",
+      "data-cover-never": [
+        "node_modules",
+        "test"
+      ]
+    }
+  },
+  "keywords": [
+    "bluegate",
+    "session",
+    "http"
+  ],
+  "author": "Maurits Lawende",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "lodash": "^4.13.1",
+    "redis": "^2.6.2"
+  },
+  "devDependencies": {
+    "blanket": "1.1.9",
+    "bluegate": "^1.1.12",
+    "chai": "^2.3.0",
+    "chai-as-promised": "^5.0.0",
+    "eslint": "^0.21.0",
+    "mocha": "^2.2.4",
+    "mocha-lcov-reporter": "0.0.2",
+    "mocha-multi": "^0.7.1",
+    "needle": "^0.9.2",
+    "rapidity": "^1.0.1"
+  }
+}
