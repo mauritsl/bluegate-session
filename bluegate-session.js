@@ -140,7 +140,7 @@ module.exports = function(app, options) {
           }
           value = session.getId();
         }
-        this.setCookie(options.cookieName, value, expire);
+        this.setCookie(options.cookieName, value, expire, '/');
       }
       // Save session.
       return session.save();
