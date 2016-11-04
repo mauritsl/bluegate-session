@@ -1,7 +1,7 @@
 BlueGate Session
 ==================
 
-Sssion support for BlueGate.
+Sssion support for BlueGate using a Redis database.
 
 ## Installation
 
