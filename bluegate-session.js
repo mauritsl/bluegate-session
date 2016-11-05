@@ -106,6 +106,13 @@ module.exports = function(app, options) {
 
   var redisClient = Redis.createClient(options.database);
 
+  // Wrap the close function to close the redis client as well.
+  var closeFunction = app.close;
+  app.close = function() {
+    redisClient.quit();
+    return closeFunction.apply(app);
+  };
+
   app.initialize(function() {
     // Check if sessions are disabled (not whitelisted or blacklisted) for this path.
     if (!match(options.enable, this.path) || match(options.disable, this.path)) {
