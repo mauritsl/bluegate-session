@@ -4,5 +4,6 @@ node_modules
 .settings
 .vagrant
 coverage.html
+coverage
 performance.html
 lcov.txt
