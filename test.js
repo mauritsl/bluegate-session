@@ -236,4 +236,31 @@ describe('BlueGate session', function() {
     });
   });
 
+  it('will use expire date from options', function() {
+    var app = new BlueGate({
+      log: false
+    });
+    var url = 'http://localhost:3001';
+    // app.error(function() { console.log(this.error); });
+    require('./bluegate-session.js')(app, {
+      cookieExpires: 3600
+    });
+    app.process('GET /', function(session) {
+      session.set('foo', 'bar');
+    });
+    return app.listen(3001).then(function() {
+      return Needle.getAsync(url);
+    }).then(function(response) {
+      var pattern = /Expires\=([^;]+);/;
+      expect(response[0].headers).to.have.property('set-cookie');
+      var value = response[0].headers['set-cookie'][0];
+      expect(value).to.match(pattern);
+      var expires = new Date(value.match(pattern)[1]);
+      var expiresIn = (expires - new Date()) / 1e3;
+      expect(expiresIn > 3595 && expiresIn < 3605).to.equal(true);
+    }).then(function() {
+      return app.close();
+    });
+  });
+
 });
