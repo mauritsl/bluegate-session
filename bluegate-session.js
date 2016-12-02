@@ -57,7 +57,9 @@ Session.prototype.empty = function() {
 };
 
 Session.prototype.save = function() {
+  var self = this;
   return this._redis.setexAsync('session:' + this._id, this._expires, JSON.stringify(this._data)).then(function() {
+    self._changed = false;
     // Discard results.
     return null;
   });
@@ -131,7 +133,7 @@ module.exports = function(app, options) {
     }
   });
 
-  app.postprocess(function(session) {
+  var save = function(session) {
     if (session instanceof Session && session.changed()) {
       // Set cookie if not already set or if session id changed.
       if (this.getCookie(options.cookieName, 'alphanum') !== session.getId()) {
@@ -152,5 +154,8 @@ module.exports = function(app, options) {
       // Save session.
       return session.save();
     }
-  });
+  };
+
+  app.postprocess(save);
+  app.error(save);
 };

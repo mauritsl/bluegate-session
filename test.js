@@ -28,7 +28,7 @@ describe('BlueGate session', function() {
     app = new BlueGate({
       log: false
     });
-    app.error(function() { console.log(this.error); });
+    // app.error(function() { console.log(this.error); });
     require('./bluegate-session.js')(app, {});
     return app.listen(3000);
   });
@@ -212,4 +212,28 @@ describe('BlueGate session', function() {
       expect(_session).to.not.be.an('object');
     });
   });
+
+  it('can store session in error flow', function() {
+    var path1 = testPath();
+    var path2 = testPath();
+    app.process('GET ' + path1, function(session) {
+      session.set('foo', 'bar');
+      throw new Error('go to error flow');
+    });
+    app.error('GET ' + path1, function(session) {
+      return 'error page';
+    });
+    app.process('GET ' + path2, function(session) {
+      return {foo: session.get('foo')};
+    });
+    var cookies;
+    return Needle.getAsync(url + path1, {parse_cookies: true}).then(function(response) {
+      cookies = response[0].cookies;
+      expect(response[1]).to.equal('error page');
+      return Needle.getAsync(url + path2, {cookies: cookies, parse_cookies: true});
+    }).then(function(response) {
+      expect(response[1]).to.have.property('foo', 'bar');
+    });
+  });
+
 });
